@@ -1,0 +1,90 @@
+library(tidyverse) 
+library(ggplot2)
+library(RColorBrewer)
+library(scales)
+library(lubridate)
+library(ggcorrplot)
+library(lattice)
+library(psych)
+library(reshape2)   
+library(dplyr)
+library(mapproj)
+library(maps)
+
+#Create dataset
+df <- data.frame(state = tolower(row.names(USArrests)), USArrests)
+df
+
+#Create second dataset
+StateMap <- map_data("state")
+StateMap
+
+
+# Merge datasets
+CrimeMap <- merge(StateMap, df, by.x = "region", by.y = "state")
+
+
+# Sort Datasets 
+CrimeMap <- arrange(CrimeMap, group, order)
+CrimeMap
+
+# Plot for Murder
+
+MurderPlot <- ggplot(CrimeMap, aes(x = long, y = lat, group = group, fill = Murder)) + 
+  geom_polygon(colour = "black") + 
+  coord_map("polyconic")
+  
+ MurderPlot <- MurderPlot + 
+  ggtitle("Proportion of Murder in the USA")
+  
+MurderPlot <- MurderPlot + 
+  scale_fill_gradient2(low = "yellow", mid = "orange", high = "red",
+                       midpoint = median(df$Murder))
+MurderPlot
+
+# Plot for Assault
+
+AssaultPlot <- ggplot(CrimeMap, aes(x = long, y = lat, group = group, fill = Assault)) + 
+  geom_polygon(colour = "black") + 
+  coord_map("polyconic")
+
+# Add title 
+AssaultPlot <- AssaultPlot + 
+  ggtitle("Proportion of Assault in the USA")
+
+# Create colors
+AssaultPlot <- AssaultPlot + 
+  scale_fill_gradient2(low = "yellow", mid = "orange", high = "red",
+                       midpoint = median(df$Assault))
+AssaultPlot
+
+
+
+# Plot for Rape
+
+RapePlot <- ggplot(CrimeMap, aes(x = long, y = lat, group = group, fill = Rape)) + 
+  geom_polygon(colour = "black") + 
+  coord_map("polyconic")
+  
+  RapePlot <- RapePlot + 
+  ggtitle("Proportion of Rape in the USA")
+  
+RapePlot <- RapePlot + 
+  scale_fill_gradient2(low = "yellow", mid = "orange", high = "red",
+                       midpoint = median(df$Rape))
+RapePlot
+
+# Plot for Urban Pop 
+
+UrbanPlot <- ggplot(CrimeMap, aes(x = long, y = lat, group = group, fill = UrbanPop)) + 
+  geom_polygon(colour = "black") + 
+  coord_map("polyconic")
+  
+  UrbanPlot <- UrbanPlot + 
+  ggtitle("Proportion of Urban in the USA")
+  
+UrbanPlot <- UrbanPlot + 
+  scale_fill_gradient2(low = "yellow", mid = "orange", high = "red",
+                       midpoint = median(df$UrbanPop))
+UrbanPlot
+
